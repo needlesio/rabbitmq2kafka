@@ -1,0 +1,32 @@
+group 'io.needles'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+shadowJar {
+    manifest{
+        attributes('Main-Class': 'io.needles.rabbitmq2kafka.Main')
+    }
+}
+
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.9.0.1'
+    compile group: 'com.rabbitmq', name: 'amqp-client', version: '3.6.5'
+}
