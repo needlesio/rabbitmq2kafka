@@ -5,9 +5,9 @@ A bare bones POC of how a shovel reading messages off rabbitmq and writing them 
 
 ---
 #### Build
-To build run the following
+To build you must have jdk 8+ installed, then just run the following
 
-`./gradlew shadowJar`
+`./gradlew`
 
 ---
 #### To run locally(with some help from docker)

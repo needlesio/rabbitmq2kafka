@@ -1,6 +1,8 @@
 group 'io.needles'
 version '1.0-SNAPSHOT'
 
+defaultTasks 'clean', 'shadowJar'
+
 buildscript {
     repositories {
         jcenter()
