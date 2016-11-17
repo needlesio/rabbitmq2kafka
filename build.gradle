@@ -1,26 +1,23 @@
 group 'io.needles'
 version '1.0-SNAPSHOT'
 
-defaultTasks 'clean', 'shadowJar'
+defaultTasks 'clean', 'bootRepackage'
 
 buildscript {
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.4.2.RELEASE'
     }
 }
 
 apply plugin: 'java'
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'org.springframework.boot'
 
-shadowJar {
-    manifest{
-        attributes('Main-Class': 'io.needles.rabbitmq2kafka.Main')
-    }
+springBoot {
+    mainClass = 'io.needles.rabbitmq2kafka.Main'
 }
-
 
 sourceCompatibility = 1.8
 
@@ -29,6 +26,11 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.9.0.1'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    compile group: 'io.dropwizard.metrics', name: 'metrics-core', version: '3.1.2'
+    compile group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: '3.1.2'
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.10.0.1'
     compile group: 'com.rabbitmq', name: 'amqp-client', version: '3.6.5'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
 }
