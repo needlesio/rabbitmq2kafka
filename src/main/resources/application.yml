@@ -1,0 +1,40 @@
+# Application level config
+
+metrics:
+  port: 8000
+  logToConsole: false
+  consoleLogPeriod: 300
+
+
+rabbitmq:
+  servers: 192.168.99.100:5672
+  username: guest
+  password: guest
+  vHost: /
+  declareQueue: true
+  queueName: test
+  qosPrefetchCount: 1000
+
+kafka:
+  servers: 192.168.99.100:9092
+  acks: all
+  lingerMs: 20
+  compression: none
+  retries: 2
+  maxBlockTimeMs: 30000
+  maxRequestSize: 1048576
+  topicName: test
+---
+
+# Map onto spring config where needed
+server:
+  port: ${metrics.port}
+
+# Pretty print metrics output
+spring:
+  jackson:
+    serialization.indent_output: true
+
+logging:
+  level:
+    org.springframework: ERROR
