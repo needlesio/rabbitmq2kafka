@@ -1,6 +1,6 @@
 # Needles Rabbitmq2Kafka
 
-A bare bones POC of how a shovel reading messages off rabbitmq and writing them to kafka
+A bare bones POC of a shovel for reading messages off rabbitmq and writing them to kafka
 ##Not yet stress tested or proven in a production like setting, be warned.
 
 ---
