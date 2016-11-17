@@ -1,5 +1,6 @@
 package io.needles.rabbitmq2kafka;
 
+import com.codahale.metrics.Histogram;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
@@ -33,6 +34,7 @@ public class Shovel implements Lifecycle {
     private RabbitMqConsumer rabbitMqConsumer;
 
     private Meter rabbitmqIncomingMeter;
+    private Histogram rabbitmqIncomingSizeHistogram;
     private Meter kafkaExceptionMeter;
     private Meter kafkaSuccessMeter;
     private Timer kafkaWriteLatencyTimer;
@@ -67,7 +69,8 @@ public class Shovel implements Lifecycle {
     }
 
     private void setupMetrics(){
-        rabbitmqIncomingMeter = metricRegistry.meter("rabbitmq.incoming");
+        rabbitmqIncomingMeter = metricRegistry.meter("rabbitmq.incoming.meter");
+        rabbitmqIncomingSizeHistogram = metricRegistry.histogram("rabbitmq.incoming.sizes");
         kafkaExceptionMeter = metricRegistry.meter("kafka.outgoing.exceptions");
         kafkaSuccessMeter = metricRegistry.meter("kafka.outgoing.success");
         kafkaWriteLatencyTimer = metricRegistry.timer("kafka.write.latency");
@@ -115,6 +118,7 @@ public class Shovel implements Lifecycle {
         @Override
         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
             rabbitmqIncomingMeter.mark();
+            rabbitmqIncomingSizeHistogram.update(body.length);
             ProducerRecord<byte[], byte[]> record = new ProducerRecord<>(kafkaConfig.getTopicName(), body);
 
             long startSendTime = System.nanoTime();

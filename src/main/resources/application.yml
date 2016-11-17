@@ -29,11 +29,9 @@ kafka:
 # Map onto spring config where needed
 server:
   port: ${metrics.port}
-
-# Pretty print metrics output
-spring:
-  jackson:
-    serialization.indent_output: true
+  context_parameters:
+    com.codahale.metrics.servlets.MetricsServlet:
+      durationUnit: MILLISECONDS
 
 logging:
   level:

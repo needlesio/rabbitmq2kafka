@@ -31,7 +31,8 @@ Or with console metrics enabled
 
 `METRICS_LOG_TO_CONSOLE=true java -Xms1g -Xmx1g -XX:+UseG1GC -jar build/libs/rabbitmq2kafka*.jar`
 
-Metrics over http can be found at [http://localhost:8000/metrics](http://localhost:8000/metrics)
+Metrics over http can be found at [http://localhost:8000/metrics?pretty=true](http://localhost:8000/metrics?pretty=true),
+alternatively there's a simple dash [http://localhost:8000](http://localhost:8000) using the [benbertola/metrics-watcher](https://github.com/benbertola/metrics-watcher) library
 
 ##### How to get read and write messages for testing?
 

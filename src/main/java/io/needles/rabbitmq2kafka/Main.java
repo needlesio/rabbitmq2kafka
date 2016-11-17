@@ -3,7 +3,9 @@ package io.needles.rabbitmq2kafka;
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
+import com.codahale.metrics.servlets.MetricsServlet;
 import com.rabbitmq.client.Address;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -16,6 +18,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
@@ -74,17 +77,28 @@ public class Main {
         return new KafkaProducer<>(props);
     }
 
+    // Metrics
+
     @Bean
     @Lazy(false)
-    public ConsoleReporter consoleReporter(MetricsConfig config, MetricRegistry registry){
-        // Add some heap memory usage metrics while we're at it...
+    public MetricRegistry metricsRegistry(){
+        MetricRegistry metricRegistry = new MetricRegistry();
+        // Add some heap memory usage metrics
         Map<String, Metric> metrics = new MemoryUsageGaugeSet().getMetrics();
         List<String> memoryKeys = Arrays.asList("heap.committed", "heap.init", "heap.max", "heap.usage", "heap.used");
         for (String k : memoryKeys){
-            registry.register(k, metrics.get(k));
+            metricRegistry.register(k, metrics.get(k));
         }
 
+        // Add GC metrics
+        metricRegistry.registerAll(new GarbageCollectorMetricSet());
 
+        return metricRegistry;
+    }
+
+    @Bean
+    @Lazy(false)
+    public ConsoleReporter consoleReporter(MetricsConfig config, MetricRegistry registry){
         if (config.isLogToConsole()) {
             ConsoleReporter reporter = ConsoleReporter.forRegistry(registry)
                     .convertRatesTo(TimeUnit.SECONDS)
@@ -94,5 +108,10 @@ public class Main {
             return reporter;
         }
         return null;
+    }
+
+    @Bean
+    public ServletRegistrationBean metricsServletRegistration(MetricRegistry metricsRegistry){
+        return new ServletRegistrationBean(new MetricsServlet(metricsRegistry), "/metrics/*");
     }
 }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>RabbitMq 2 Kafka Metrics</title>
+      <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <link rel="stylesheet" type="text/css" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+      <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+
+      <!-- https://github.com/benbertola/metrics-watcher -->
+      <script src="static/js/metrics-watcher.min.js"></script>
+      <link href="static/css/metrics-watcher-style.css" rel="stylesheet">
+  </head>
+  <body>
+      <div class="container mainContent">
+          <h2>RabbitMq Reads</h2>
+          <div class="row">
+              <div id="rabbitReads" class="col-md-12"></div>
+          </div>
+          <div class="row">
+              <div id="rabbitSizes" class="col-md-12"></div>
+          </div>
+          <br>
+
+
+          <h2>Kafka Writes</h2>
+          <div class="row">
+              <div id="kafkaSuccess" class="col-md-6"></div>
+              <div id="kafkaExceptions" class="col-md-6"></div>
+          </div>
+          <div class="row">
+              <div id="kafkaLatency" class="col-md-12"></div>
+          </div>
+
+          <h2>Jvm Heap</h2>
+          <div class="row">
+              <div id="heapUsed" class="col-md-3"></div>
+          </div>
+      </div>
+      <script>
+		function addGraphs() {
+		    // Rabbitmq
+		    metricsWatcher.addMeter("rabbitReads", "rabbitmq.incoming", "meter", 10, "Read Rate");
+		    metricsWatcher.addHistogram("rabbitSizes", "rabbitmq.incoming", "sizes", 1024, "Message Sizes");
+
+		    // Kafka
+			metricsWatcher.addMeter("kafkaSuccess", "kafka.outgoing", "success", 10, "Success Rate");
+			metricsWatcher.addMeter("kafkaExceptions", "kafka.outgoing", "exceptions", 10, "Exception Rate");
+			metricsWatcher.addTimer("kafkaLatency", "kafka.write", "latency", 100, "Write Latency", "latency", 100);
+
+			// Memory
+            metricsWatcher.addGauge("heapUsed", "heap", "usage", "Heap used (%)");
+		}
+		$(document).ready(function() {
+			addGraphs();
+			metricsWatcher.initGraphs();
+			keepUpdatingGraphs();
+		});
+		function keepUpdatingGraphs() {
+			downloadMetricData();
+			setTimeout(keepUpdatingGraphs, 5000);
+		}
+		function downloadMetricData() {
+            url = "metrics";
+            $.ajax({
+                contentType : "application/json",
+                url : url,
+                success : function(data) {
+                    metricsWatcher.updateGraphs(data);
+                },
+                error : function(xhr, ajaxOptions, thrownError) {
+                    metricsWatcher.initGraphs();
+                }
+            });
+		}
+	</script>
+  </body>
+
+</html>
