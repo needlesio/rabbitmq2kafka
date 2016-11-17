@@ -33,6 +33,14 @@ Or with console metrics enabled
 
 Metrics over http can be found at [http://localhost:8000/metrics](http://localhost:8000/metrics)
 
+##### How to get read and write messages for testing?
+
+For producing rabbitmq messages simply use the rabbitmq management web ui for me this happens to be [http://192.168.99.100:15672](http://192.168.99.100:15672/#/queues/%2F/test)
+
+For reading the messages off kafka run the following command
+
+`docker run -it --rm --link zookeeper --link kafka confluent/tools kafka-console-consumer --zookeeper zookeeper:2181 --bootstrap-server kafka:9092 --topic test --new-consumer --from-beginning`
+
 ---
 #### To configure
 There are many ways of configuring this tool, the easiest are probably to provide a custom application.yml in the current directory or to
