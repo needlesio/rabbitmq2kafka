@@ -26,11 +26,13 @@ repositories {
 }
 
 dependencies {
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
     compile group: 'io.dropwizard.metrics', name: 'metrics-core', version: '3.1.2'
     compile group: 'io.dropwizard.metrics', name: 'metrics-jvm', version: '3.1.2'
+    compile group: 'io.dropwizard.metrics', name: 'metrics-servlets', version: '3.1.2'
     compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.10.0.1'
     compile group: 'com.rabbitmq', name: 'amqp-client', version: '3.6.5'
+
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
 }
