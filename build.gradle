@@ -35,4 +35,6 @@ dependencies {
     compile group: 'com.rabbitmq', name: 'amqp-client', version: '3.6.5'
 
     compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.16.10'
+
+    testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
 }
